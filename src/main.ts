@@ -1,4 +1,4 @@
-import cf from 'campfire.js';
+import cf, { Store } from 'campfire.js';
 import utils from './utils';
 import { parse, ParseResult } from 'papaparse';
 import { ImageGen } from './card';
@@ -29,8 +29,13 @@ async function getFileFromURL(url: string, sheetName: string) {
 
 window.addEventListener('DOMContentLoaded', async () => {
     let data: Record<string, unknown> = {};
+    let canvasInvisible = true;
+
     const wordList = document.querySelector("#words");
-    const definitionPane = document.querySelector("#definition");
+    const definitionPane = document.querySelector("#definition-pane");
+    const prompt: HTMLElement | null = document.querySelector("#prompt");
+    const currentDef = new cf.Store({});
+    Object.defineProperty(window, 'currentDef', currentDef);
     
     try {
         data = await getFileFromURL(MASTER, "");
@@ -45,9 +50,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     for (const word of parsed.data) {
-        console.log(word);
-        wordList?.appendChild(cf.nu("div.word", {
-            innerHTML: word.Term,
-        }));
+        wordList?.appendChild(
+            cf.nu("div.word", {
+                innerHTML: word.Term,
+                on: {
+                    'click': (e) => {
+                        currentDef.update(word);
+                    }
+                }
+            }
+        ));
     }
+    
+    const canvas: HTMLElement | null = document.querySelector('#defn-canvas');
+
+    window.addEventListener('resize', (e) => {
+        canvas!.style.height = canvas?.getBoundingClientRect().width + 'px';
+    })
+
+    currentDef.on("update", (val) => {
+        if (canvasInvisible) {
+            canvasInvisible = false;
+            canvas!.style.display = 'block';
+            canvas!.style.height = canvas?.getBoundingClientRect().width + 'px';
+
+            prompt!.style.display = 'none';
+        }
+        canvas!.style.height = canvas?.getBoundingClientRect().width + 'px';
+        new ImageGen(canvas, val).draw();
+    });
 })

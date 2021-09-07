@@ -1,5 +1,3 @@
-window.onload = init;
-
 const HANDLE = "@girlupvitc"; // Instagram handle to print
 const INTERNAL_DIMENSIONS = { // dimensions of the internal canvas, controls
     x: 1080,
@@ -30,7 +28,7 @@ class ImageGen {
         let cStyle = window.getComputedStyle(this.canvas);
         this.canvas.width = INTERNAL_DIMENSIONS.x;
         this.canvas.height = INTERNAL_DIMENSIONS.y;
-        this.word = word.Word;
+        this.word = word.Term;
         this.pronunciation = word.Pronunciation;
         this.definition = word.Definition;
         this.type = word.Type;

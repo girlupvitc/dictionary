@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import cf from 'campfire.js';
 import utils from './utils';
 import { parse } from 'papaparse';
+import { ImageGen } from './card';
 const MASTER = "https://docs.google.com/spreadsheets/d/17uwwOGlFX1VLN-OtY6e_iYqz1-68DiRUgErO7O99hJ4/edit#gid=0";
 function getFileFromURL(url, sheetName) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -27,7 +28,10 @@ function getFileFromURL(url, sheetName) {
 window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
     let data = {};
     const wordList = document.querySelector("#words");
-    const definitionPane = document.querySelector("#definition");
+    const definitionPane = document.querySelector("#definition-pane");
+    const prompt = document.querySelector("#prompt");
+    const currentDef = new cf.Store({});
+    Object.defineProperty(window, 'currentDef', currentDef);
     try {
         data = yield getFileFromURL(MASTER, "");
     }
@@ -42,6 +46,19 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         console.log(word);
         wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.word", {
             innerHTML: word.Term,
+            on: {
+                'click': (e) => {
+                    console.log(word);
+                    currentDef.update(word);
+                }
+            }
         }));
     }
+    const canvas = document.querySelector('#defn-canvas');
+    currentDef.on("update", (val) => {
+        prompt.style.display = 'none';
+        canvas.style.display = 'block';
+        canvas.style.height = (canvas === null || canvas === void 0 ? void 0 : canvas.getBoundingClientRect().width) + 'px';
+        new ImageGen(canvas, val).draw();
+    });
 }));
