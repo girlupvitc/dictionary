@@ -2,7 +2,6 @@
     text-align: center;
     padding: 0.6rem;
     margin: 0.3rem;
-    border: 2px dashed #eeeeee;
     cursor: pointer;
     user-select: none;
     font-weight: 700;
@@ -14,9 +13,18 @@
     margin-top: 14rem;
 }
 
-.button:hover {
-    color: white;
-    border-style: solid;
+#words > .button {
+    border: 2px dashed #eeeeee;
+}
+
+@media not all and (hover: none) {
+    .button:hover {
+        color: white;
+    }
+
+    #words > .button {
+        border-style: solid;
+    }
 }
 
 ::-webkit-scrollbar-track {
