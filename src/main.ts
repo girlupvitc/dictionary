@@ -1,7 +1,14 @@
 import cf from 'campfire.js';
 import utils from './utils';
-import { parse } from 'papaparse';
+import { parse, ParseResult } from 'papaparse';
 import { ImageGen } from './card';
+
+interface Word {
+    Term: string,
+    Pronunciation: string,
+    Definition: string,
+    Type: string
+}
 
 const MASTER = "https://docs.google.com/spreadsheets/d/17uwwOGlFX1VLN-OtY6e_iYqz1-68DiRUgErO7O99hJ4/edit#gid=0";
 
@@ -22,6 +29,8 @@ async function getFileFromURL(url: string, sheetName: string) {
 
 window.addEventListener('DOMContentLoaded', async () => {
     let data: Record<string, unknown> = {};
+    const wordList = document.querySelector("#words");
+    const definitionPane = document.querySelector("#definition");
     
     try {
         data = await getFileFromURL(MASTER, "");
@@ -29,11 +38,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     catch (e) {
         console.log(`error loading data: ${e}`);
     }
-    const parsed = parse(data.text as string, utils.PAPA_OPTIONS);
+    const parsed:ParseResult<Word> = parse(data.text as string, utils.PAPA_OPTIONS);
     
     if (!parsed.data) {
         console.log('error parsing received data.');
     }
 
-    console.log(parsed.data);
+    for (const word of parsed.data) {
+        console.log(word);
+        wordList?.appendChild(cf.nu("div.word", {
+            innerHTML: word.Term,
+        }));
+    }
 })

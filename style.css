@@ -1,0 +1,36 @@
+.word {
+    text-align: center;
+    padding: 0.6rem;
+    margin: 0.3rem;
+    border: 2px dashed #eeeeee;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+}
+
+.word:first-of-type {
+    margin-top: 14rem;
+}
+
+.word:hover {
+    color: white;
+    border-style: solid;
+}
+
+::-webkit-scrollbar-track {
+    color: transparent;
+}
+
+::-webkit-scrollbar {
+    width: 0.3rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #f5f4f0;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent #f5f4f0;
+}
+  

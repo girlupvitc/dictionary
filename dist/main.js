@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import cf from 'campfire.js';
 import utils from './utils';
 import { parse } from 'papaparse';
 const MASTER = "https://docs.google.com/spreadsheets/d/17uwwOGlFX1VLN-OtY6e_iYqz1-68DiRUgErO7O99hJ4/edit#gid=0";
@@ -25,6 +26,8 @@ function getFileFromURL(url, sheetName) {
 }
 window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
     let data = {};
+    const wordList = document.querySelector("#words");
+    const definitionPane = document.querySelector("#definition");
     try {
         data = yield getFileFromURL(MASTER, "");
     }
@@ -35,5 +38,10 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
     if (!parsed.data) {
         console.log('error parsing received data.');
     }
-    console.log(parsed.data);
+    for (const word of parsed.data) {
+        console.log(word);
+        wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.word", {
+            innerHTML: word.Term,
+        }));
+    }
 }));

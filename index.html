@@ -7,9 +7,68 @@
     <title>GirlUp Dictionary</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Source+Serif+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        #words {
+            display: flex;
+            flex-direction: column;
+            width: 20%;
+            background-color: rgb(255, 50, 84);
+            color: #f5f4f0;
+            overflow-y: auto;
+            flex: 1;
+            font-family: 'Montserrat';
+        }
+
+        #definition {
+            width: 80%;
+            padding-left: 1rem;
+            font-family: 'Source Sans Pro', serif;
+            background-color: #ffcdc9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #definition, #words {
+            height: 100vh;
+            margin: 0;
+        }
+
+        #app {
+            min-width: 100vw;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        @media screen and (max-aspect-ratio: 4/3) {
+            #definition {
+                width: 70%;
+            }
+            #words {
+                width: 30%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id='app'>
+        <div id='words'></div>
+        <div id='definition'>
+            <h1>Feminist Dictionary</h1>
+            <h3>Pick a word on the left to get started</h3>
+        </div>
+    </div>
     <script src="dist/bundle.js"></script>
 </body>
 </html>
