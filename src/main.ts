@@ -56,7 +56,7 @@ function screenTooNarrow() {
 
 function fixCanvasSize(canvas: HTMLElement) {
     if (screenTooNarrow()) {
-        canvas.style.width = (window.innerWidth * 0.95) + 'px';
+        canvas.style.width = (window.innerWidth * 0.87) + 'px';
         canvas.style.height = canvas.style.width;
     }
     else {
@@ -73,7 +73,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const wordList: HTMLElement = document.querySelector("#words")!;
 
     const prompt: HTMLElement = document.querySelector("#prompt")!;
-    const canvas: HTMLElement = document.querySelector('#defn-canvas')!;
+    const canvas: HTMLCanvasElement = document.querySelector('#defn-canvas')!;
+    const defPane: HTMLElement = document.querySelector('#definition-pane')!;
+    const controls: HTMLElement = document.querySelector("#share-controls")!;
 
     const currentDef = new cf.Store({});
     const mobileState = new cf.Store(true);
@@ -139,13 +141,44 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     })
 
-    currentDef.on("update", (val) => {
+    currentDef.on("update", (val: Word) => {
         fixCanvasSize(canvas);
         if (canvasInvisible) {
             canvasInvisible = false;
             canvas!.style.display = 'block';
         }
         new ImageGen(canvas, val).draw();
+        const shareBtn = cf.nu(
+            "div.button",
+            {
+                innerHTML: 'Copy a link to this definition...',
+                on: {
+                    'click': function(e) {
+                        utils.copyTextToClipboard(`${window.location.origin}${window.location.pathname}?define=${val.Term}`)
+                        this.innerHTML = 'Copied!';
+                    }
+                }
+            }
+        )
+        const downloadBtn = cf.nu(
+            "div.button",
+            {
+                innerHTML: 'Download image',
+                on: {
+                    'click': (e) => {
+                        const contents = canvas.toDataURL('image/jpeg');
+                        cf.nu('a', {
+                            m: {
+                                download: `${val.Term}.png`,
+                                href: contents,
+                            }
+                        }).click();
+                    }
+                }
+            }
+        )
+        controls.innerHTML = '';
+        controls.append(shareBtn, downloadBtn);
     });
 
     if (window.location.search) {

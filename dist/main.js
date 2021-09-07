@@ -49,7 +49,7 @@ function screenTooNarrow() {
 }
 function fixCanvasSize(canvas) {
     if (screenTooNarrow()) {
-        canvas.style.width = (window.innerWidth * 0.95) + 'px';
+        canvas.style.width = (window.innerWidth * 0.87) + 'px';
         canvas.style.height = canvas.style.width;
     }
     else {
@@ -63,6 +63,8 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
     const wordList = document.querySelector("#words");
     const prompt = document.querySelector("#prompt");
     const canvas = document.querySelector('#defn-canvas');
+    const defPane = document.querySelector('#definition-pane');
+    const controls = document.querySelector("#share-controls");
     const currentDef = new cf.Store({});
     const mobileState = new cf.Store(true);
     mobileState.on("update", (isMobile) => {
@@ -124,6 +126,31 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
             canvas.style.display = 'block';
         }
         new ImageGen(canvas, val).draw();
+        const shareBtn = cf.nu("div.button", {
+            innerHTML: 'Copy a link to this definition...',
+            on: {
+                'click': function (e) {
+                    utils.copyTextToClipboard(`${window.location.origin}${window.location.pathname}?define=${val.Term}`);
+                    this.innerHTML = 'Copied!';
+                }
+            }
+        });
+        const downloadBtn = cf.nu("div.button", {
+            innerHTML: 'Download image',
+            on: {
+                'click': (e) => {
+                    const contents = canvas.toDataURL('image/jpeg');
+                    cf.nu('a', {
+                        m: {
+                            download: `${val.Term}.png`,
+                            href: contents,
+                        }
+                    }).click();
+                }
+            }
+        });
+        controls.innerHTML = '';
+        controls.append(shareBtn, downloadBtn);
     });
     if (window.location.search) {
         const params = new URLSearchParams(window.location.search);
