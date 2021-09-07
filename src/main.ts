@@ -66,6 +66,10 @@ function fixCanvasSize(canvas: HTMLElement) {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+    if ('fonts' in document && 'ready' in (document as any).fonts) {
+        try { await (document as any).fonts.ready }
+        catch (e) {}
+    } // try to wait for fonts to load but fail silently if they don't
 
     let data: Record<string, unknown> = {};
     let canvasInvisible = true;
@@ -111,17 +115,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     catch (e) {
         console.log(`error loading data: ${e}`);
+        throw new Error('Stopping execution.');
     }
     const parsed: ParseResult<Word> = parse(data.text as string, utils.PAPA_OPTIONS);
 
     if (!parsed.data) {
         console.log('error parsing received data.');
+        throw new Error('Stopping execution.');
     }
+
+    parsed.data.sort((a, b) => a.Term.localeCompare(b.Term));
 
     for (const word of parsed.data) {
         wordList?.appendChild(
             cf.nu("div.button", {
-                innerHTML: word.Term,
+                innerHTML: word.Term.toLocaleLowerCase(),
                 on: {
                     'click': (e) => {
                         hideMask();
@@ -141,7 +149,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     })
 
-    currentDef.on("update", (val: Word) => {
+    currentDef.on("update", async (val: Word) => {
         fixCanvasSize(canvas);
         if (canvasInvisible) {
             canvasInvisible = false;

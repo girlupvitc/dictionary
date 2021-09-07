@@ -58,6 +58,12 @@ function fixCanvasSize(canvas) {
     }
 }
 window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
+    if ('fonts' in document && 'ready' in document.fonts) {
+        try {
+            yield document.fonts.ready;
+        }
+        catch (e) { }
+    } // try to wait for fonts to load but fail silently if they don't
     let data = {};
     let canvasInvisible = true;
     const wordList = document.querySelector("#words");
@@ -96,11 +102,16 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
     }
     catch (e) {
         console.log(`error loading data: ${e}`);
+        throw new Error('Stopping execution.');
     }
     const parsed = parse(data.text, utils.PAPA_OPTIONS);
     if (!parsed.data) {
         console.log('error parsing received data.');
+        throw new Error('Stopping execution.');
     }
+    parsed.data.sort((a, b) => {
+        return a.Term.localeCompare(b.Term);
+    });
     for (const word of parsed.data) {
         wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.button", {
             innerHTML: word.Term,
@@ -119,7 +130,7 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         fixCanvasSize(canvas);
         mobileState.update(screenTooNarrow());
     });
-    currentDef.on("update", (val) => {
+    currentDef.on("update", (val) => __awaiter(void 0, void 0, void 0, function* () {
         fixCanvasSize(canvas);
         if (canvasInvisible) {
             canvasInvisible = false;
@@ -151,7 +162,7 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         });
         controls.innerHTML = '';
         controls.append(shareBtn, downloadBtn);
-    });
+    }));
     if (window.location.search) {
         const params = new URLSearchParams(window.location.search);
         let str = params.get('define');
