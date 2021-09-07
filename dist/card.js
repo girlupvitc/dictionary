@@ -4,81 +4,10 @@ const INTERNAL_DIMENSIONS = {
     x: 1080,
     y: 1080
 };
-const GRADIENT = ["#EAC6D9", "#E3B7CD", "#DBA9C1", "#D49AB4", "#CC8BA8", "#C6E2Ea", "#b7dce4", "#a7d7de", "#98d1d7", "#88cbd1", "#E2c6ea", "#Deb7df", "#daa7d5", "#d598ca", "#d188bf"];
-// const GRADIENT = ["#EAC6D9", "#E3B7CD", "#DBA9C1", "#D49AB4", "#CC8BA8"]
-let gradientIdx = 0;
-let longest = function (lines) {
-    lines.reduce(function (a, b) {
-        return a.length > b.length ? a : b;
-    });
-};
-Array.prototype.remove = function (itm) {
-    let idx = this.indexOf(itm);
-    if (idx >= 0)
-        this.splice(idx, 1);
-};
-class AssetManager {
-    constructor(callback) {
-        this.queue = [];
-        this.successCount = 0;
-        this.results = {};
-        this.callback = callback;
-    }
-    loadAll() {
-        let that = this;
-        that.numFiles = that.queue.length;
-        for (let x of this.queue) {
-            fetch(x.url, { method: 'GET' }).then((res) => {
-                if (res.ok) {
-                    if (x.type === 'img') {
-                        res.blob().then((result) => {
-                            createImageBitmap(result).then((imgBitmap) => {
-                                that.results[x.name] = imgBitmap;
-                            });
-                        }).then(function () {
-                            that.successCount++;
-                            if (that.isDone()) {
-                                that.callback();
-                            }
-                        });
-                    }
-                    else {
-                        res.text().then((result) => {
-                            that.results[x.name] = result;
-                        }).then(function () {
-                            that.successCount++;
-                            if (that.isDone()) {
-                                that.callback();
-                            }
-                        });
-                    }
-                }
-                that.queue.remove(x);
-            });
-        }
-    }
-    queueItems(arr) {
-        for (let x of arr) {
-            if (!this.queue.includes(x))
-                this.queue.push(x);
-        }
-    }
-    isDone() {
-        return (this.numFiles == this.successCount);
-    }
-    getAsset(name) {
-        return this.results[name];
-    }
-}
-class FileInfo {
-    constructor(name, url, type) {
-        this.name = name;
-        this.url = url;
-        this.type = type;
-    }
-}
+// find the longest line in an array of strings
+let longest = (lines) => lines.reduce((a, b) => a.length > b.length ? a : b);
 class ImageGen {
-    constructor(canvas, word, type, pronunciation, definition, bgcolor) {
+    constructor(canvas, word, bgcolor) {
         this.fontSize = 80; // this is the default text size in px. Modified by setFont
         this.canvas = canvas; // pass in a canvas, to allow flexibility - either draw offscreen
         // or directly onto the DOM
@@ -86,10 +15,10 @@ class ImageGen {
         let cStyle = window.getComputedStyle(this.canvas);
         this.canvas.width = INTERNAL_DIMENSIONS.x;
         this.canvas.height = INTERNAL_DIMENSIONS.y;
-        this.word = word;
-        this.pronunciation = pronunciation;
-        this.definition = definition;
-        this.type = type;
+        this.word = word.Word;
+        this.pronunciation = word.Pronunciation;
+        this.definition = word.Definition;
+        this.type = word.Type;
         this.bgcolor = bgcolor;
     }
     setFont(face, style, weight, size) {
@@ -125,7 +54,6 @@ class ImageGen {
         return lines;
     }
     drawCard() {
-        // const BGCOLOR = ImageGen.BG_COLORS[Math.floor(Math.random() * ImageGen.BG_COLORS.length)];
         const BGCOLOR = this.bgcolor || ImageGen.BG_COLORS[Math.floor(Math.random() * ImageGen.BG_COLORS.length)];
         this.ctx.fillStyle = BGCOLOR; // background color
         this.ctx.fillRect(0, 0, INTERNAL_DIMENSIONS.x, INTERNAL_DIMENSIONS.y); // fill the canvas or it remains transparent
@@ -204,43 +132,4 @@ ImageGen.WORD_FONT = "Source Serif Pro";
 ImageGen.TEXT_FONT = "Montserrat";
 ImageGen.LEFT_CARD_MARGIN = 180; // picked to resemble existing posts.
 ImageGen.SIDEBAR_WIDTH = 5;
-function init() {
-    let assets = new AssetManager(function () {
-        let content = assets.getAsset("know_your_terms_pipe.csv");
-        let lines = content.split("\n");
-        let generators = [];
-        let zip = new JSZip();
-        for (let x of lines) {
-            let parts = x.split("|");
-            let c = document.createElement("canvas");
-            let wd = document.createElement('h3');
-            wd.innerHTML = parts[1];
-            document.body.appendChild(wd);
-            c.classList.add("dict-canvas");
-            document.body.appendChild(c);
-            c.onclick = function () {
-                let tmp = document.createElement('a');
-                tmp.href = c.toDataURL();
-                tmp.download = parts[1] + ".png";
-                document.body.appendChild(tmp);
-                tmp.click();
-                document.body.removeChild(tmp);
-            };
-            let gen = new ImageGen(c, parts[1], parts[2], parts[3], parts[4], GRADIENT[(gradientIdx++) % GRADIENT.length]);
-            gen.draw();
-            zip.file(`${parts[1]}.png`, c.toDataURL().split(",")[1], { base64: true });
-        }
-        let downloadBtn = document.createElement("button");
-        downloadBtn.innerHTML = "Download all";
-        downloadBtn.onclick = function () {
-            zip.generateAsync({ type: "base64" }).then(function (content) {
-                location.href = "data:application/zip;base64," + content;
-            });
-        };
-        document.body.prepend(downloadBtn);
-    });
-    assets.queueItems([
-        new FileInfo("know_your_terms_pipe.csv", "know_your_terms_pipe.csv", "text")
-    ]);
-    assets.loadAll();
-}
+export { ImageGen };
