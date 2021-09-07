@@ -25,13 +25,70 @@ function getFileFromURL(url, sheetName) {
         })).json();
     });
 }
+function showMask(msg, onclick = (e) => { }) {
+    const mask = document.querySelector("#mask");
+    mask.style.display = 'flex';
+    mask.innerHTML = msg;
+    mask.onclick = onclick;
+}
+function hideMask() {
+    const mask = document.querySelector("#mask");
+    mask.style.display = 'none';
+}
+function showWordList(elt, maskContents = '') {
+    elt.style.display = 'flex';
+    elt.style.zIndex = '10000';
+}
+function hideWordList(elt) {
+    elt.style.display = 'none';
+    elt.style.zIndex = 'initial';
+    hideMask();
+}
+function screenTooNarrow() {
+    return matchMedia('(max-aspect-ratio: 1/1)').matches;
+}
+function fixCanvasSize(canvas) {
+    if (screenTooNarrow()) {
+        canvas.style.width = (window.innerWidth * 0.95) + 'px';
+        canvas.style.height = canvas.style.width;
+    }
+    else {
+        canvas.style.height = (window.innerWidth * 0.4) + 'px';
+        canvas.style.width = canvas.style.height;
+    }
+}
 window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
     let data = {};
+    let canvasInvisible = true;
     const wordList = document.querySelector("#words");
-    const definitionPane = document.querySelector("#definition-pane");
     const prompt = document.querySelector("#prompt");
+    const canvas = document.querySelector('#defn-canvas');
     const currentDef = new cf.Store({});
-    Object.defineProperty(window, 'currentDef', currentDef);
+    const mobileState = new cf.Store(true);
+    mobileState.on("update", (isMobile) => {
+        prompt.innerHTML = '';
+        if (isMobile) {
+            hideWordList(wordList);
+            prompt.appendChild(cf.nu('div.button', {
+                i: 'Pick a word',
+                on: {
+                    'click': (e) => {
+                        showWordList(wordList);
+                        showMask('', (e) => {
+                            hideMask();
+                            hideWordList(wordList);
+                        });
+                    }
+                },
+                s: { border: 'none' }
+            }));
+        }
+        else {
+            prompt.innerHTML = 'Pick a word on the left';
+            showWordList(wordList);
+        }
+    });
+    mobileState.update(screenTooNarrow());
     try {
         data = yield getFileFromURL(MASTER, "");
     }
@@ -43,22 +100,29 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         console.log('error parsing received data.');
     }
     for (const word of parsed.data) {
-        console.log(word);
-        wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.word", {
+        wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.button", {
             innerHTML: word.Term,
             on: {
                 'click': (e) => {
-                    console.log(word);
+                    hideMask();
+                    if (screenTooNarrow())
+                        hideWordList(wordList);
                     currentDef.update(word);
                 }
             }
         }));
     }
-    const canvas = document.querySelector('#defn-canvas');
+    hideMask();
+    window.addEventListener('resize', (e) => {
+        fixCanvasSize(canvas);
+        mobileState.update(screenTooNarrow());
+    });
     currentDef.on("update", (val) => {
-        prompt.style.display = 'none';
-        canvas.style.display = 'block';
-        canvas.style.height = (canvas === null || canvas === void 0 ? void 0 : canvas.getBoundingClientRect().width) + 'px';
+        fixCanvasSize(canvas);
+        if (canvasInvisible) {
+            canvasInvisible = false;
+            canvas.style.display = 'block';
+        }
         new ImageGen(canvas, val).draw();
     });
 }));

@@ -1,4 +1,4 @@
-.word {
+.button {
     text-align: center;
     padding: 0.6rem;
     margin: 0.3rem;
@@ -6,13 +6,15 @@
     cursor: pointer;
     user-select: none;
     font-weight: 700;
+    background: rgb(255, 50, 84);
+    color: #f5f4f0;
 }
 
-.word:first-of-type {
+#words > .button:first-of-type {
     margin-top: 14rem;
 }
 
-.word:hover {
+.button:hover {
     color: white;
     border-style: solid;
 }
@@ -33,4 +35,3 @@
     scrollbar-width: thin;
     scrollbar-color: transparent #f5f4f0;
 }
-  

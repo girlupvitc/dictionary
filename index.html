@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,14 +8,20 @@
     <title>GirlUp Dictionary</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap"
+        rel="stylesheet">
     <style>
+
+        html {
+            height: 100%;
+        }
+
         #words {
             display: flex;
             flex-direction: column;
             width: 20%;
             background-color: rgb(255, 50, 84);
-            color: #f5f4f0;
             overflow-y: auto;
             flex: 1;
             font-family: 'Montserrat';
@@ -23,21 +30,23 @@
         #definition-pane {
             width: 80%;
             padding-left: 1rem;
-            font-family: 'Source Sans Pro', serif;
+            font-family: 'Source Sans Pro', sans-serif;
             background-color: #ffcdc9;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: scroll;
         }
 
-        #definition-pane, #words {
-            height: 100vh;
+        #definition-pane,
+        #words {
+            height: 100%;
             margin: 0;
         }
 
         #app {
-            min-width: 100vw;
+            min-width: 100%;
             margin: 0;
             display: flex;
             overflow: hidden;
@@ -47,39 +56,80 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100%;
         }
 
         #defn-canvas {
             display: none;
-            width: 60%;
+            height: 80%;
         }
 
         #mask {
             height: 100vh;
             width: 100vw;
+            display: flex;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-family: 'Source Sans Pro', sans-serif;
+            backdrop-filter: blur(5px);
         }
 
         @media screen and (max-aspect-ratio: 4/3) {
             #definition-pane {
                 width: 70%;
             }
+
             #words {
                 width: 30%;
+            }
+        }
+
+        @media only screen and (max-aspect-ratio: 1/1) {
+            #definition-pane {
+                width: 100vw;
+                padding-left: 0;
+            }
+
+            #words {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 60vw;
+            }
+
+            #defn-canvas {
+                height: auto;
+                width: 80%;
             }
         }
     </style>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id='app'>
         <div id='words'></div>
         <div id='definition-pane'>
             <h1>Feminist Dictionary</h1>
-            <h3 id='prompt'>Pick a word on the left to get started</h3>
             <canvas id='defn-canvas'></canvas>
+            <h3 id='prompt'>Pick a word on the left</h3>
         </div>
+    </div>
+    <div id='mask'>
+        <h1>Loading...</h1>
+        <noscript><p>Make sure you have JavaScript enabled.</p></noscript>
     </div>
     <script src="dist/bundle.js"></script>
 </body>
+
 </html>
