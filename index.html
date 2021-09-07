@@ -12,9 +12,15 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital@0;1&display=swap"
         rel="stylesheet">
     <style>
-
         html {
             height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #ffcdc9;
         }
 
         #words {
@@ -29,17 +35,16 @@
 
         #definition-pane {
             width: 80%;
+            padding-top: 4rem;
             padding-left: 1rem;
             font-family: 'Source Sans Pro', sans-serif;
-            background-color: #ffcdc9;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             overflow: scroll;
+            margin: 0;
         }
 
-        #definition-pane,
         #words {
             height: 100%;
             margin: 0;
@@ -49,19 +54,16 @@
             min-width: 100%;
             margin: 0;
             display: flex;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
             height: 100%;
         }
 
         #defn-canvas {
             display: none;
             height: 80%;
+        }
+
+        #share-controls {
+            margin: 1rem;
         }
 
         #mask {
@@ -122,12 +124,15 @@
         <div id='definition-pane'>
             <h1>Feminist Dictionary</h1>
             <canvas id='defn-canvas'></canvas>
+            <div id='share-controls'></div>
             <h3 id='prompt'>Pick a word on the left</h3>
         </div>
     </div>
     <div id='mask'>
         <h1>Loading...</h1>
-        <noscript><p>Make sure you have JavaScript enabled.</p></noscript>
+        <noscript>
+            <p>Make sure you have JavaScript enabled.</p>
+        </noscript>
     </div>
     <script src="dist/bundle.js"></script>
 </body>
