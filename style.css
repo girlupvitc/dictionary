@@ -7,6 +7,8 @@
     font-weight: 700;
     background: rgb(255, 50, 84);
     color: #f5f4f0;
+    display: inline;
+    transition-duration: 0.2s;
 }
 
 #words > .button:first-of-type {
@@ -19,10 +21,10 @@
 
 @media not all and (hover: none) {
     .button:hover {
-        color: white;
+        filter: brightness(1.2);
     }
 
-    #words > .button {
+    #words > .button:hover {
         border-style: solid;
     }
 }
@@ -42,4 +44,10 @@
 * {
     scrollbar-width: thin;
     scrollbar-color: transparent #f5f4f0;
+}
+
+@media only screen and (max-aspect-ratio: 1/1) {
+    .button {
+        display: block;
+    }
 }
