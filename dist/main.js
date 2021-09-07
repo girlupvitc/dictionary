@@ -125,4 +125,15 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         }
         new ImageGen(canvas, val).draw();
     });
+    if (window.location.search) {
+        const params = new URLSearchParams(window.location.search);
+        let str = params.get('define');
+        for (const word of parsed.data) {
+            console.log(word, str);
+            if (word.Term === str) {
+                currentDef.update(word);
+                break;
+            }
+        }
+    }
 }));

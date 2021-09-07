@@ -147,4 +147,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         new ImageGen(canvas, val).draw();
     });
+
+    if (window.location.search) {
+        const params = new URLSearchParams(window.location.search);
+        let str: string | null = params.get('define');
+        for (const word of parsed.data) {
+            console.log(word, str);
+            if (word.Term === str) {
+                currentDef.update(word);
+                break;
+            }
+        }
+    }
 })
