@@ -1,0 +1,53 @@
+.button {
+    text-align: center;
+    padding: 0.6rem;
+    margin: 0.3rem;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    background: rgb(255, 50, 84);
+    color: #f5f4f0;
+    display: inline;
+    transition-duration: 0.2s;
+}
+
+#words > .button:first-of-type {
+    margin-top: 14rem;
+}
+
+#words > .button {
+    border: 2px dashed #eeeeee;
+}
+
+@media not all and (hover: none) {
+    .button:hover {
+        filter: brightness(1.2);
+    }
+
+    #words > .button:hover {
+        border-style: solid;
+    }
+}
+
+::-webkit-scrollbar-track {
+    color: transparent;
+}
+
+::-webkit-scrollbar {
+    width: 0.3rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #f5f4f0;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent #f5f4f0;
+}
+
+@media only screen and (max-aspect-ratio: 1/1) {
+    .button {
+        display: block;
+    }
+}
