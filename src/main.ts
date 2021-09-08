@@ -65,6 +65,12 @@ function fixCanvasSize(canvas: HTMLElement) {
     }
 }
 
+function getDefinitionUrl(term: string) {
+    const params = new URLSearchParams();
+    params.set('define', term);
+    return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
     if ('fonts' in document && 'ready' in (document as any).fonts) {
         try { await (document as any).fonts.ready }
@@ -135,6 +141,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         hideMask();
                         if (screenTooNarrow()) hideWordList(wordList);
                         currentDef.update(word);
+                        window.history.pushState({}, '', getDefinitionUrl(word.Term));
                     }
                 }
             }
@@ -162,7 +169,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 innerHTML: 'Copy a link to this definition...',
                 on: {
                     'click': function(e) {
-                        utils.copyTextToClipboard(`${window.location.origin}${window.location.pathname}?define=${val.Term}`)
+                        const URL = getDefinitionUrl(val.Term);
+                        utils.copyTextToClipboard(URL);
                         this.innerHTML = 'Copied!';
                     }
                 }

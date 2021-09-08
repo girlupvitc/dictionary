@@ -57,6 +57,11 @@ function fixCanvasSize(canvas) {
         canvas.style.width = canvas.style.height;
     }
 }
+function getDefinitionUrl(term) {
+    const params = new URLSearchParams();
+    params.set('define', term);
+    return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+}
 window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void 0, function* () {
     if ('fonts' in document && 'ready' in document.fonts) {
         try {
@@ -109,18 +114,17 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
         console.log('error parsing received data.');
         throw new Error('Stopping execution.');
     }
-    parsed.data.sort((a, b) => {
-        return a.Term.localeCompare(b.Term);
-    });
+    parsed.data.sort((a, b) => a.Term.localeCompare(b.Term));
     for (const word of parsed.data) {
         wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(cf.nu("div.button", {
-            innerHTML: word.Term,
+            innerHTML: word.Term.toLocaleLowerCase(),
             on: {
                 'click': (e) => {
                     hideMask();
                     if (screenTooNarrow())
                         hideWordList(wordList);
                     currentDef.update(word);
+                    window.history.pushState({}, '', getDefinitionUrl(word.Term));
                 }
             }
         }));
@@ -141,7 +145,8 @@ window.addEventListener('DOMContentLoaded', () => __awaiter(void 0, void 0, void
             innerHTML: 'Copy a link to this definition...',
             on: {
                 'click': function (e) {
-                    utils.copyTextToClipboard(`${window.location.origin}${window.location.pathname}?define=${val.Term}`);
+                    const URL = getDefinitionUrl(val.Term);
+                    utils.copyTextToClipboard(URL);
                     this.innerHTML = 'Copied!';
                 }
             }
