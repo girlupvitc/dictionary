@@ -5,11 +5,11 @@ Google Sheet.
 
 ### Contributing
 
-1. Fork the repo, then clone your fork the repo
+1. Fork the repo, then clone your fork of the repo.
 2. `cd dictionary`
-3. Make changes
-4. Build the bundle with `npm run build`
-5. Test your changes and make a PR
+3. Make changes.
+4. Build the bundle with `npm run build`.
+5. Test your changes and make a PR.
 
 ### Acknowledgements
 
