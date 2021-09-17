@@ -28,5 +28,5 @@ Text wrapping snippet from
 
 ### LICENSE
 
-This program is free, open-source software available under the MIT license. 
-You can find a copy of the license [here](https://github.com/girlupvitc/dictionary/blob/main/LICENSE).
+This program is free, open-source software available under the 
+[MIT license](https://github.com/girlupvitc/dictionary/blob/main/LICENSE).
